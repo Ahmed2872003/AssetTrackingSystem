@@ -1,0 +1,24 @@
+server:
+  port: 8762
+
+spring:
+  application:
+    name: API-Gateway
+  cloud:
+    gateway:
+      discovery:
+        locator:
+          enabled: true       # Enables gateway to discover registered services
+          lower-case-service-id: true
+
+jwt:
+  secret: N5WhWwSLgEQJwQl/GUJEWXwwtY4yPrMhEg9M00jRGvgYyC5X137sXxbVp3bZgJd9EkLQ18rkIwkVZU7XhPJ7SA==
+  expiration: 1800000
+
+logging:
+  level:
+    org.springframework.cloud.gateway: DEBUG         # Gateway routing logs
+    org.springframework.cloud.client.discovery: DEBUG # General discovery logs
+    com.netflix.discovery: DEBUG                      # Eureka client logs
+    org.springframework.cloud.netflix.eureka: DEBUG   # Eureka-specific integration
+
