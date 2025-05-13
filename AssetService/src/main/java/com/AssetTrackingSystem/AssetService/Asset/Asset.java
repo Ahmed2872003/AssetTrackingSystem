@@ -1,9 +1,13 @@
 package com.AssetTrackingSystem.AssetService.Asset;
 
+import com.AssetTrackingSystem.AssetService.Asset_log.Asset_log;
 import com.AssetTrackingSystem.AssetService.DTO.UserDTO;
 import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.fasterxml.jackson.annotation.JsonProperty;
 import jakarta.persistence.*;
+
+import java.util.ArrayList;
+import java.util.List;
 
 
 @Entity
@@ -28,15 +32,11 @@ public class Asset {
     @JsonProperty(access = JsonProperty.Access.WRITE_ONLY)
     private Long staff_id;
 
-    @Transient
-    private UserDTO assginedTo;
-
-
     @JsonProperty(access = JsonProperty.Access.WRITE_ONLY)
     private Long asset_manager_id;
 
-    @Transient
-    private UserDTO createdBy;
+    @OneToMany(mappedBy = "asset", cascade = CascadeType.ALL, orphanRemoval = true)
+    private List<Asset_log> logs = new ArrayList<>();
 
     public static enum Status{
         ASSIGNED(1),
@@ -99,11 +99,11 @@ public class Asset {
         setStaff_id(staff_id);
         setAsset_manager_id(asset_manager_id);
     }
-    public Asset(String name, String category, Integer status_id, Long asset_manager_id) {
+    public Asset(String name, String status, String category, Long asset_manager_id) {
         setName(name);
         setCategory(category);
-        setStatus_id(status_id);
         setAsset_manager_id(asset_manager_id);
+        setStatus(status);
     }
 
     public Asset() {}
@@ -128,23 +128,13 @@ public class Asset {
         return staff_id;
     }
 
-    public UserDTO getAssginedTo() {
-        return assginedTo;
-    }
-
-    public UserDTO getCreatedBy() {
-        return createdBy;
-    }
 
     public Long getAsset_manager_id() {
-        if(this.status != null && this.status_id == null) this.status_id = Asset.Status.getIdFromStatus(this.status);
-
         return asset_manager_id;
     }
 
     public String getStatus() {
-        if(this.status_id != null && this.status == null) this.status = Asset.Status.getStatusFromId(this.status_id);
-
+        if(this.status_id != null && this.status == null) this.status = Status.getStatusFromId(this.status_id);
         return status;
     }
 
@@ -173,13 +163,6 @@ public class Asset {
         this.asset_manager_id = asset_manager_id;
     }
 
-    public void setCreatedBy(UserDTO createdBy) {
-        this.createdBy = createdBy;
-    }
-
-    public void setAssginedTo(UserDTO assginedTo) {
-        this.assginedTo = assginedTo;
-    }
 
     public void setStatus(String status) {
         this.status_id = Asset.Status.getIdFromStatus(status);

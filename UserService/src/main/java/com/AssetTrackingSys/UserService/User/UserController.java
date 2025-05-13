@@ -3,6 +3,7 @@ package com.AssetTrackingSys.UserService.User;
 
 import com.AssetTrackingSys.UserService.DTO.UpdateUserRequestDTO;
 import com.AssetTrackingSys.UserService.DTO.RegisterRequestDTO;
+import com.AssetTrackingSys.UserService.DTO.UserDTO;
 import jakarta.validation.Valid;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -15,6 +16,8 @@ import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
+import java.util.Map;
+import java.util.Set;
 
 @RestController
 @RequestMapping(path="/user")
@@ -27,8 +30,8 @@ public class UserController {
     private static final Logger log = LoggerFactory.getLogger(UserController.class);
 
     @GetMapping("/{userId}")
-    public User getUser(@PathVariable Long userId){
-        return userService.getUser(userId);
+    public User getUserById(@PathVariable Long userId){
+        return userService.getUserById(userId);
     }
 
     @GetMapping
@@ -86,5 +89,9 @@ public class UserController {
         userService.updateUser(user);
     }
 
+    @PostMapping("/batch")
+    public Map<Long, UserDTO> getUsersByIds(@RequestBody Set<Long> ids) {
+        return userService.findUsersByIds(ids);
+    }
 
 }

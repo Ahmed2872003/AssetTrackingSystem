@@ -2,6 +2,7 @@ package com.AssetTrackingSys.UserService.User;
 
 
 import com.AssetTrackingSys.UserService.Auth.AuthService;
+import com.AssetTrackingSys.UserService.DTO.UserDTO;
 import com.AssetTrackingSys.UserService.Exceptions.NotFoundException;
 import com.netflix.discovery.converters.Auto;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -12,7 +13,10 @@ import org.springframework.stereotype.Service;
 
 import javax.swing.text.html.Option;
 import java.util.List;
+import java.util.Map;
 import java.util.Optional;
+import java.util.Set;
+import java.util.stream.Collectors;
 
 @Service
 public class UserService {
@@ -30,7 +34,7 @@ public class UserService {
     }
 
 
-    public User getUser(Long userId){
+    public User getUserById(Long userId){
 
         User userExample = new User();
 
@@ -70,6 +74,12 @@ public class UserService {
 
 
         userRepo.save(userRecord.get());
+    }
+
+    public Map<Long, UserDTO> findUsersByIds(Set<Long> ids) {
+        return userRepo.findAllById(ids).stream()
+                .map(user -> new UserDTO(user.getId(), user.getName(), user.getRole()))
+                .collect(Collectors.toMap(UserDTO::getId, user -> user));
     }
 
 }
